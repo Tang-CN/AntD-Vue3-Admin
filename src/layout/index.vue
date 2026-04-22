@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   MenuFoldOutlined,
@@ -12,12 +12,12 @@ import {
   FullscreenExitOutlined,
   ReloadOutlined
 } from '@ant-design/icons-vue'
-import { useSystemStore,useUserStore } from '@/store'
-const systemStore= useSystemStore()
+import { useSystemStore, useUserStore } from '@/store'
+const systemStore = useSystemStore()
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
-const {setCollapsed,setFullscreen}=systemStore
+const { setCollapsed, setFullscreen } = systemStore
 const menuList = [
   {
     key: '/dashboard',
@@ -87,7 +87,10 @@ onMounted(() => {
       <!-- Logo区域 -->
       <div class="layout-logo h-14 flex items-center justify-center transition-all duration-300">
         <img src="/favicon.svg" alt="logo" class="w-8 h-8" />
-        <span v-if="!systemStore.collapsed" class="ml-3 text-white text-lg font-bold tracking-wider">
+        <span
+          v-if="!systemStore.collapsed"
+          class="ml-3 text-white text-lg font-bold tracking-wider"
+        >
           AntD Admin
         </span>
       </div>
@@ -98,7 +101,6 @@ onMounted(() => {
         mode="inline"
         :selected-keys="selectedKeys"
         :open-keys="openKeys"
-        :inline-collapsed="systemStore.collapsed"
         @click="handleMenuClick"
         class="sider-menu border-none"
       >
@@ -109,19 +111,16 @@ onMounted(() => {
               <component :is="item.icon" />
               <span>{{ item.title }}</span>
             </template>
-            <a-menu-item
-              v-for="child in item.children"
-              :key="child.key"
-            >
+            <a-menu-item v-for="child in item.children" :key="child.key">
               {{ child.title }}
             </a-menu-item>
           </a-sub-menu>
           <template v-else>
             <!-- 一级菜单 -->
-          <a-menu-item :key="item.key">
-            <component :is="item.icon" />
-            <span>{{ item.title }}</span>
-          </a-menu-item>
+            <a-menu-item :key="item.key">
+              <component :is="item.icon" />
+              <span>{{ item.title }}</span>
+            </a-menu-item>
           </template>
         </template>
       </a-menu>
@@ -130,7 +129,9 @@ onMounted(() => {
     <!-- 右侧主体区域 -->
     <a-layout class="main-container">
       <!-- 顶部导航栏 -->
-      <a-layout-header class="layout-header bg-white flex items-center justify-between px-5 shadow-sm">
+      <a-layout-header
+        class="layout-header bg-white flex items-center justify-between px-5 shadow-sm"
+      >
         <!-- 左侧折叠按钮 -->
         <div class="header-left flex items-center">
           <div
@@ -169,7 +170,9 @@ onMounted(() => {
 
           <!-- 用户信息 -->
           <a-dropdown :trigger="['click']" placement="bottomRight">
-            <div class="flex items-center gap-3 cursor-pointer h-9 p-2 rounded-md hover:bg-gray-100 transition-colors">
+            <div
+              class="flex items-center gap-3 cursor-pointer h-9 p-2 rounded-md hover:bg-gray-100 transition-colors"
+            >
               <a-avatar size="small">
                 <UserOutlined class="text-base text-gray-600"></UserOutlined>
               </a-avatar>
