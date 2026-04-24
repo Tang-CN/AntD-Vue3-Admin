@@ -19,3 +19,11 @@ export const GetUserInfo = (userId: string) => {
 export const GetUserList = (data: any) => {
   return httpGet<any>('/users', null, data)
 }
+
+export const CreateUser = (data: any) => {
+  return httpPost<any>('/users', data)
+}
+
+export const DeleteUser = (userIds: number[]) => {
+  return httpPost<any>('/users/delete', { userIds })
+}

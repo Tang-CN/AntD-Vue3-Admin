@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppRouter } from '@/hooks/useAppRouter'
-import { GetUserList } from '@/services'
+import { useMessage } from '@/hooks/useMessage'
+import { useUserForm } from './useUserForm'
+import { DeleteUser, GetUserList } from '@/services'
 import ResizeableTable from '@/component/ResizeableTable'
 import ActionButtons from '@/component/ActionButtonGroup'
-import { SearchOutlined } from '@ant-design/icons-vue'
+import Form from './component/form.vue'
+import type { ActionButtonItem } from '@/component/ActionButtonGroup'
+const { success } = useMessage()
 const route = useRoute()
 const router = useAppRouter()
+const userForm = useUserForm()
 const tableRef = ref(null)
 const tableData = ref([])
 const columns = ref([
@@ -39,6 +44,11 @@ const columns = ref([
     title: '创建时间',
     dataIndex: 'createdAt',
     key: 'createdAt'
+  },
+  {
+    title: '操作',
+    key: 'action',
+    width: 150
   }
 ])
 
@@ -49,15 +59,17 @@ const pagination = ref({
   showSizeChanger: true
 })
 
-const selectedRowKeys = ref([])
+const selectedKeys = ref([])
 const selectedRows = ref([])
-const actionButtons = ref<any>([
+const actionButtons = ref<ActionButtonItem[]>([
   {
     key: 'add',
     label: '新增',
     type: 'primary',
     shape: 'circle',
-    onClick: () => {
+    onClick: ctx => {
+      // ctx.selectedCount
+      userForm.open()
       console.log('新增')
     }
   },
@@ -76,11 +88,44 @@ const actionButtons = ref<any>([
     label: ctx => `删除(${ctx.selectedCount})`,
     danger: true,
     disabled: ctx => ctx.selectedCount === 0,
-    onClick: ctx => {
-      console.log('删除', ctx.selectedRows)
+    onClick: async ctx => {
+      handleDelete(ctx.selectedKeys)
     }
   }
 ])
+
+const tableButtons = ref<ActionButtonItem[]>([
+  {
+    key: 'edit',
+    label: '编辑',
+    // type: 'primary',
+    // shape: 'circle',
+    onClick: ctx => {
+      console.log(ctx)
+      userForm.open(ctx.record)
+    }
+  },
+  {
+    key: 'delete',
+    label: '删除',
+    danger: true,
+    // type: 'primary',
+    // shape: 'circle',
+    onClick: ctx => {
+      console.log(ctx)
+      const ids = [ctx.record.id]
+      handleDelete(ids)
+    }
+  }
+])
+
+const handleDelete = async (ids: number[]) => {
+  const res: any = await DeleteUser(ids)
+  if (res.code == 200) {
+    success('删除成功')
+    handleGetUserList()
+  }
+}
 
 const handleTableChange = async ({ current, pageSize }) => {
   pagination.value.current = current
@@ -102,9 +147,14 @@ const clear = () => {
 
 const onSelect = ({ keys, rows }) => {
   console.log(keys, rows)
-  selectedRowKeys.value = keys
+  selectedKeys.value = keys
   selectedRows.value = rows
 }
+
+userForm.onRefresh(() => {
+  handleGetUserList()
+})
+
 onMounted(() => {
   handleGetUserList()
 })
@@ -118,7 +168,7 @@ onMounted(() => {
         :shape="'round'"
         :buttons="actionButtons"
         :selectedRows="selectedRows"
-        :selectedCount="selectedRowKeys.length"
+        :selectedKeys="selectedKeys"
       />
     </div>
     <div class="flex-1 min-h-0 overflow-auto">
@@ -137,8 +187,15 @@ onMounted(() => {
             <span>Name</span>
           </template>
         </template>
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'action'">
+            <!-- <span>111</span> -->
+            <ActionButtons type="link" mode="row" :buttons="tableButtons" :record="record" />
+          </template>
+        </template>
       </ResizeableTable>
     </div>
+    <Form />
   </div>
 </template>
 
