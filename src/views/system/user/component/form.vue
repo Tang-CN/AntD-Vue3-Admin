@@ -1,7 +1,7 @@
 <template>
   <FormDrawer
     v-model:visible="formDrawer.visible.value"
-    :title="title.value"
+    :title="title"
     :fields="formFields"
     :form-values="formDrawer.formData.value"
     @submit="handleSubmit"
@@ -25,12 +25,12 @@
 import FormDrawer from '@/component/FormDrawer.tsx'
 import type { FormFieldConfig } from '@/component/FormDrawer.tsx'
 import { useUserForm } from '../useUserForm'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 const formDrawer = useUserForm()
-const title = computed(() => (formDrawer.isEdit.value ? '编辑用户' : '添加用户'))
-// ✅ 表单初始值
 
-// ✅ 表单字段配置数组 ✨
+const title = computed(() => (formDrawer.isEdit.value ? '编辑用户' : '添加用户'))
+
+// 表单字段配置数组 TODO：options 动态好像有问题
 const formFields: FormFieldConfig[] = [
   {
     name: 'username',
@@ -69,13 +69,11 @@ const formFields: FormFieldConfig[] = [
   {
     name: 'role',
     label: '角色',
-    type: 'select',
-    options: [
-      { label: '超级管理员', value: 1 },
-      { label: '管理员', value: 2 },
-      { label: '普通用户', value: 3 },
-      { label: '访客', value: 4 }
-    ]
+    type: 'select'
+    // options: formDrawer.roles.value.map(item => ({
+    //   label: item.name,
+    //   value: item.id
+    // }))
     // required: true
   },
   {

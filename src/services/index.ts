@@ -27,3 +27,11 @@ export const CreateUser = (data: any) => {
 export const DeleteUser = (userIds: number[]) => {
   return httpPost<any>('/users/delete', { userIds })
 }
+
+export const GetUserDetail = (id: number) => {
+  return httpGet<any>('/users', { id })
+}
+
+export const GetRoles = () => {
+  return httpGet<any>('/roles')
+}

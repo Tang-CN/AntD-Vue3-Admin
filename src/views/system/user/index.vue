@@ -4,7 +4,8 @@ import { useRoute } from 'vue-router'
 import { useAppRouter } from '@/hooks/useAppRouter'
 import { useMessage } from '@/hooks/useMessage'
 import { useUserForm } from './useUserForm'
-import { DeleteUser, GetUserList } from '@/services'
+import { usePromiseAll } from '@/hooks/usePromiseAll'
+import { DeleteUser, GetRoles, GetUserDetail, GetUserList } from '@/services'
 import ResizeableTable from '@/component/ResizeableTable'
 import ActionButtons from '@/component/ActionButtonGroup'
 import Form from './component/form.vue'
@@ -102,7 +103,19 @@ const tableButtons = ref<ActionButtonItem[]>([
     // shape: 'circle',
     onClick: ctx => {
       console.log(ctx)
-      userForm.open(ctx.record)
+      usePromiseAll(
+        {
+          user: () => handleGetUserDetail(ctx.record.id),
+          role: () => handleGetRoles()
+        },
+        {
+          loading: userForm.setLoading,
+          onSuccess(data) {
+            userForm.open(data.user)
+            userForm.setOther(data.role)
+          }
+        }
+      )
     }
   },
   {
@@ -118,6 +131,15 @@ const tableButtons = ref<ActionButtonItem[]>([
     }
   }
 ])
+const handleGetRoles = async () => {
+  const res = await GetRoles()
+  return res.data
+}
+
+const handleGetUserDetail = async (id: number) => {
+  const res = await GetUserDetail(id)
+  return res.data
+}
 
 const handleDelete = async (ids: number[]) => {
   const res: any = await DeleteUser(ids)
