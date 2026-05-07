@@ -23,15 +23,15 @@
 
 <script setup lang="ts">
 import FormDrawer from '@/component/FormDrawer.tsx'
-import type { FormFieldConfig } from '@/component/FormDrawer.tsx'
+// import type { FormFieldConfig } from '@/component/FormDrawer.tsx'
 import { useUserForm } from '../useUserForm'
-import { computed, watch } from 'vue'
+import { computed, ref } from 'vue'
 const formDrawer = useUserForm()
 
 const title = computed(() => (formDrawer.isEdit.value ? '编辑用户' : '添加用户'))
 
 // 表单字段配置数组 TODO：options 动态好像有问题
-const formFields: FormFieldConfig[] = [
+const formFields = ref<any>([
   {
     name: 'username',
     label: '用户名',
@@ -69,12 +69,12 @@ const formFields: FormFieldConfig[] = [
   {
     name: 'role',
     label: '角色',
-    type: 'select'
-    // options: formDrawer.roles.value.map(item => ({
-    //   label: item.name,
-    //   value: item.id
-    // }))
-    // required: true
+    type: 'select',
+    // options: roleOptions.value
+    options: formDrawer.extraData.value?.roles?.map(item => ({
+      label: item?.name,
+      value: item?.id
+    }))
   },
   {
     name: 'birthday',
@@ -106,7 +106,7 @@ const formFields: FormFieldConfig[] = [
       showCount: true
     }
   }
-]
+])
 
 const handleSubmit = async v => {
   await formDrawer.submit(v)

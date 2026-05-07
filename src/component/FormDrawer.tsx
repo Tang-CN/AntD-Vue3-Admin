@@ -151,7 +151,6 @@ export default defineComponent({
 
     // 渲染表单项
     const renderField = (field: FormFieldConfig) => {
-      debugger
       if (field.hidden) return null
 
       const {

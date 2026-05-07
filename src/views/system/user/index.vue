@@ -112,7 +112,7 @@ const tableButtons = ref<ActionButtonItem[]>([
           loading: userForm.setLoading,
           onSuccess(data) {
             userForm.open(data.user)
-            userForm.setOther(data.role)
+            userForm.setExtraData({ roles: data.role })
           }
         }
       )

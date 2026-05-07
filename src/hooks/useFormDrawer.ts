@@ -34,6 +34,12 @@ export function useFormDrawer<T = any>() {
 
   const isEdit = computed(() => !!formData.value)
 
+  const extraData = ref<Record<string, any>>({}) // 新增额外数据存储
+
+  const setExtraData = (data: Record<string, any>) => {
+    extraData.value = data
+  }
+
   return {
     visible,
     isEdit,
@@ -44,6 +50,8 @@ export function useFormDrawer<T = any>() {
     reset,
     setLoading,
     refresh,
-    onRefresh
+    onRefresh,
+    extraData,
+    setExtraData
   }
 }
