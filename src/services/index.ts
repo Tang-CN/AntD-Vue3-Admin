@@ -32,6 +32,6 @@ export const GetUserDetail = (id: number) => {
   return httpGet<any>('/users', { id })
 }
 
-export const GetRoles = () => {
-  return httpGet<any>('/roles')
+export const GetRoles = (data: any) => {
+  return httpGet<any>('/roles', {}, data)
 }
