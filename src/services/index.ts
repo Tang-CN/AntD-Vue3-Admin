@@ -17,7 +17,7 @@ export const GetUserInfo = (userId: string) => {
 }
 
 export const GetUserList = (data: any) => {
-  return httpGet<any>('/users', null, data)
+  return httpGet<any>('/users', {}, data)
 }
 
 export const CreateUser = (data: any) => {
@@ -32,6 +32,18 @@ export const GetUserDetail = (id: number) => {
   return httpGet<any>('/users', { id })
 }
 
-export const GetRoles = (data: any) => {
-  return httpGet<any>('/roles', {}, data)
+export const GetRoles = () => {
+  return httpGet<any>('/roles')
+}
+
+export const GetRoleDetail = (id: number) => {
+  return httpGet<any>('/roles', { id })
+}
+
+export const DeleteRoles = (roleIds: number[]) => {
+  return httpPost<any>('/roles/delete', { roleIds })
+}
+
+export const CreateRole = (data: any) => {
+  return httpPost<any>('/roles', data)
 }

@@ -1,12 +1,12 @@
 import { useFormDrawer } from '@/hooks/useFormDrawer'
-import { CreateUser } from '@/services'
+import { CreateRole } from '@/services'
 import { useMessage } from '@/hooks/useMessage'
 
 const { success } = useMessage()
 // 单列模式
 const singleInstance = useFormDrawer()
 
-export function useUserForm() {
+export function useRoleForm() {
   const { isEdit, formData: oldFormData } = singleInstance
 
   const submit = async (formData?: any) => {
@@ -14,10 +14,10 @@ export function useUserForm() {
       console.log('update', oldFormData, formData)
       // TODO 更新用户 对比数据 拿到更新项在进行更新
     } else {
-      const res: any = await CreateUser({
-        username: formData?.username,
-        password: formData?.password,
-        email: formData?.email
+      const res: any = await CreateRole({
+        name: formData?.name,
+        code: formData?.code,
+        description: formData?.description
       })
       if (res.code == 200) {
         success('添加成功')

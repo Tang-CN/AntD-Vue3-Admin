@@ -3,17 +3,16 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppRouter } from '@/hooks/useAppRouter'
 import { useMessage } from '@/hooks/useMessage'
-import { useUserForm } from './useRoleForm'
-import { usePromiseAll } from '@/hooks/usePromiseAll'
-import { DeleteUser, GetRoles, GetUserDetail, GetUserList } from '@/services'
+import { useRoleForm } from './useRoleForm'
+import { DeleteRoles, GetRoleDetail, GetRoles } from '@/services'
 import ResizeableTable from '@/component/ResizeableTable'
 import ActionButtons from '@/component/ActionButtonGroup'
-// import Form from './component/form.vue'
+import Form from './component/form.vue'
 import type { ActionButtonItem } from '@/component/ActionButtonGroup'
 const { success } = useMessage()
 const route = useRoute()
 const router = useAppRouter()
-const userForm = useUserForm()
+const roleForm = useRoleForm()
 const tableRef = ref(null)
 const tableData = ref([])
 const columns = ref([
@@ -71,7 +70,7 @@ const actionButtons = ref<ActionButtonItem[]>([
     shape: 'circle',
     onClick: ctx => {
       // ctx.selectedCount
-      userForm.open()
+      roleForm.open()
       console.log('新增')
     }
   },
@@ -102,8 +101,8 @@ const tableButtons = ref<ActionButtonItem[]>([
     label: '编辑',
     // type: 'primary',
     // shape: 'circle',
-    onClick: ctx => {
-      console.log(ctx)
+    onClick: async ctx => {
+      roleForm.open(await handleGetRoleDetail(ctx?.record?.id))
     }
   },
   {
@@ -120,31 +119,22 @@ const tableButtons = ref<ActionButtonItem[]>([
   }
 ])
 
-const handleGetUserDetail = async (id: number) => {
-  const res = await GetUserDetail(id)
+const handleGetRoleDetail = async (id: number) => {
+  const res = await GetRoleDetail(id)
   return res.data
 }
 
 const handleDelete = async (ids: number[]) => {
-  const res: any = await DeleteUser(ids)
+  const res: any = await DeleteRoles(ids)
   if (res.code == 200) {
     success('删除成功')
     handleGetRoleList()
   }
 }
 
-const handleTableChange = async ({ current, pageSize }) => {
-  pagination.value.current = current
-  pagination.value.pageSize = pageSize
-  await handleGetRoleList()
-}
 const handleGetRoleList = async () => {
-  const res = await GetRoles({
-    page: pagination.value.current,
-    pageSize: pagination.value.pageSize
-  })
-  tableData.value = res.data.list
-  pagination.value.total = res.data.total
+  const res = await GetRoles()
+  tableData.value = res.data
 }
 
 const clear = () => {
@@ -157,7 +147,7 @@ const onSelect = ({ keys, rows }) => {
   selectedRows.value = rows
 }
 
-userForm.onRefresh(() => {
+roleForm.onRefresh(() => {
   handleGetRoleList()
 })
 
@@ -183,9 +173,7 @@ onMounted(() => {
         rowKey="id"
         :columns="columns"
         :data-source="tableData"
-        :pagination="pagination"
         :bordered="true"
-        @pageChange="handleTableChange"
         @selectionChange="onSelect"
       >
         <template #headerCell="{ column }">
@@ -201,7 +189,7 @@ onMounted(() => {
         </template>
       </ResizeableTable>
     </div>
-    <!-- <Form /> -->
+    <Form />
   </div>
 </template>
 

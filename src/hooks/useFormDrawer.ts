@@ -7,6 +7,7 @@ export function useFormDrawer<T = any>() {
 
   const open = (record?: T) => {
     visible.value = true
+    debugger
     formData.value = record ? { ...record } : null
   }
 
